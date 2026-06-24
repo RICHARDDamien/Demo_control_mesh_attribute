@@ -7,21 +7,28 @@ def set_selected_attribute(domain, attr_name, value, default_value=None):
     obj = bpy.context.object
     me = obj.data
     bm = bmesh.from_edit_mesh(me)
+
     elements_map = {"POINT": bm.verts, "EDGE": bm.edges, "FACE": bm.faces}
+
     elements = elements_map.get(domain)
     if elements is None:
         return
+    
     layer = elements.layers.float.get(attr_name)
     is_new_layer = layer is None
     if is_new_layer:
         layer = elements.layers.float.new(attr_name)
+
     default_assign_value = float(value if default_value is None else default_value)
+
     if is_new_layer:
         for elem in elements:
             elem[layer] = default_assign_value
+
     for elem in elements:
         if elem.select:
             elem[layer] = float(value)
+            
     bmesh.update_edit_mesh(me, loop_triangles=False)
 
 
